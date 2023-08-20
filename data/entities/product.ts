@@ -1,5 +1,4 @@
 import { Column, Entity, PrimaryGeneratedColumn, OneToOne } from "typeorm";
-import { InventoryModal } from "./inventory";
 
 @Entity("products")
 export class ProductModal {
@@ -9,18 +8,31 @@ export class ProductModal {
   @Column()
   name: string;
 
-  @Column()
+  @Column({ nullable: true })
   description: string;
 
-  @Column()
+  @Column({ nullable: true })
   category: string;
 
   @Column()
-  price: number;
+  selling_price: number;
 
+  @Column({ nullable: true })
+  cost_price: number;
+
+  // put some default asset paths
   @Column()
   image_url: string;
 
-  @OneToOne(() => InventoryModal, (inventory) => inventory.product)
-  inventory: InventoryModal;
+  @Column()
+  bar_code: string;
+
+  @Column()
+  qr_code: string;
+
+  @Column()
+  stock: number;
+
+  @Column()
+  measurement_unit: string;
 }

@@ -5,7 +5,7 @@ export function useGetAllTodos() {
   const { todosRepository } = useDatabaseConnection();
   return useQuery({
     queryFn: () => {
-      return todosRepository.getAll();
+      return todosRepository.find();
     },
     queryKey: ["todos"],
   });

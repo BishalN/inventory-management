@@ -4,7 +4,6 @@ import {
   Button,
   Modal,
   Pressable,
-  Switch,
   TextInput,
 } from "react-native";
 import { Text, View } from "../../components/Themed";

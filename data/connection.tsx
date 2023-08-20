@@ -7,35 +7,39 @@ import React, {
   useState,
 } from "react";
 import { ActivityIndicator } from "react-native";
-import { Connection, createConnection } from "typeorm";
+import { DataSource, Repository } from "typeorm/browser";
+
 import { TodoModel } from "./entities/todo";
-import { TodosRepository } from "./repositories/todosRepository";
+import { ProductModal } from "./entities/product";
 
 interface DatabaseConnectionContextData {
-  todosRepository: TodosRepository;
+  todosRepository: Repository<TodoModel>;
+  productRepository: Repository<ProductModal>;
 }
 
 const DatabaseConnectionContext = createContext<DatabaseConnectionContextData>(
   {} as DatabaseConnectionContextData
 );
 
+const dataSource = new DataSource({
+  database: "todos_example_article.db",
+  driver: require("expo-sqlite"),
+  entities: [TodoModel, ProductModal],
+  synchronize: true,
+  type: "expo",
+});
+
 export const DatabaseConnectionProvider = ({
   children,
 }: {
   children: ReactNode;
 }) => {
-  const [connection, setConnection] = useState<Connection | null>(null);
+  const [connection, setConnection] = useState<DataSource | null>(null);
 
   const connect = useCallback(async () => {
-    const createdConnection = await createConnection({
-      type: "expo",
-      database: "todos_example_article.db",
-      driver: require("expo-sqlite"),
-      entities: [TodoModel],
-      synchronize: true,
-    });
+    const source = await dataSource.initialize();
 
-    setConnection(createdConnection);
+    setConnection(source);
   }, []);
 
   useEffect(() => {
@@ -51,7 +55,8 @@ export const DatabaseConnectionProvider = ({
   return (
     <DatabaseConnectionContext.Provider
       value={{
-        todosRepository: new TodosRepository(connection),
+        todosRepository: connection.getRepository(TodoModel),
+        productRepository: connection.getRepository(ProductModal),
       }}
     >
       {children}
